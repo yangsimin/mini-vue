@@ -1,0 +1,40 @@
+/*
+ * @Author: simonyang
+ * @Date: 2022-04-18 14:32:44
+ * @LastEditTime: 2022-04-18 22:35:06
+ * @LastEditors: simonyang
+ * @Description:
+ */
+
+import { mutableHandlers, readonlyHandlers } from './baseHandlers'
+
+export const enum ReactiveFlags {
+  IS_REACTIVE = '__v_isReactive',
+  IS_READONLY = '__v_isReadonly',
+}
+
+export function reactive(raw) {
+  return createActiveObject(raw, mutableHandlers)
+}
+
+export function readonly(raw) {
+  return createActiveObject(raw, readonlyHandlers)
+}
+
+export function isReactive(value) {
+  if (!value) {
+    return false
+  }
+  return !!value[ReactiveFlags.IS_REACTIVE]
+}
+
+export function isReadonly(value) {
+  if (!value) {
+    return false
+  }
+  return !!value[ReactiveFlags.IS_READONLY]
+}
+
+function createActiveObject(raw: any, baseHandlers) {
+  return new Proxy(raw, baseHandlers)
+}
