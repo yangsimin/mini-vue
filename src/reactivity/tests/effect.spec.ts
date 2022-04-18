@@ -1,7 +1,7 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-18 14:25:35
- * @LastEditTime: 2022-04-18 19:37:15
+ * @LastEditTime: 2022-04-18 23:23:27
  * @LastEditors: simonyang
  * @Description:
  */
@@ -68,16 +68,19 @@ describe('effect', () => {
     const obj = reactive({ prop: 1 })
     const runner = effect(() => {
       dummy = obj.prop
+      return 'runner'
     })
     obj.prop = 2
     expect(dummy).toBe(2)
 
     stop(runner)
-    obj.prop = 3
+    // obj.prop = 3
+    obj.prop++
     expect(dummy).toBe(2)
 
-    runner()
+    const ret = runner()
     expect(dummy).toBe(3)
+    expect(ret).toBe('runner')
   })
 
   it('onStop', () => {
