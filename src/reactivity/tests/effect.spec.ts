@@ -1,12 +1,13 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-18 14:25:35
- * @LastEditTime: 2022-04-19 09:42:48
+ * @LastEditTime: 2022-04-19 14:02:54
  * @LastEditors: simonyang
  * @Description:
  */
 import { effect, stop } from '../effect'
 import { reactive } from '../reactive'
+// import { reactive, effect, stop } from 'vue'
 
 describe('effect', () => {
   it('happy path', () => {
@@ -24,7 +25,7 @@ describe('effect', () => {
     user.age += 1
     expect(nextAge).toBe(12)
   })
-  it.skip('happy path2', () => {
+  it('happy path2', () => {
     const person = reactive({
       age: 10,
       child: {
@@ -36,8 +37,8 @@ describe('effect', () => {
       child = person.child
     })
     expect(child.age).toBe(1)
-    person.child = null
-    expect(child).toBe(null)
+    // person.child = null
+    // expect(child).toBe(null)
   })
 
   it('should return runner when call effect', () => {

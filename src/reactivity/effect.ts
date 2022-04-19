@@ -1,7 +1,7 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-18 14:43:10
- * @LastEditTime: 2022-04-19 10:58:41
+ * @LastEditTime: 2022-04-19 13:58:26
  * @LastEditors: simonyang
  * @Description:
  */
@@ -9,14 +9,16 @@ import { extend } from '../shared'
 
 let activeEffect
 let shouldTrack
-class ReactiveEffect {
+export class ReactiveEffect {
   private _fn: any
-  isActive = true
   deps: Array<Set<ReactiveEffect>> = []
+  isActive = true
   onStop?: () => void
+  public scheduler: Function | undefined
 
-  constructor(fn) {
+  constructor(fn, scheduler?: Function) {
     this._fn = fn
+    this.scheduler = scheduler
   }
   run() {
     if (!this.isActive) {
@@ -81,6 +83,8 @@ export function isTracking() {
 
 export function trigger(target, key) {
   let depsMap = targetMap.get(target)
+  if (!depsMap) return
+
   let dep = depsMap.get(key)
 
   triggerEffects(dep)
