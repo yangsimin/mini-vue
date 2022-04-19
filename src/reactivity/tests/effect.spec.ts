@@ -1,7 +1,7 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-18 14:25:35
- * @LastEditTime: 2022-04-19 14:02:54
+ * @LastEditTime: 2022-04-19 14:20:12
  * @LastEditors: simonyang
  * @Description:
  */
@@ -37,8 +37,10 @@ describe('effect', () => {
       child = person.child
     })
     expect(child.age).toBe(1)
-    // person.child = null
-    // expect(child).toBe(null)
+    person.child = {
+      age: 2,
+    }
+    expect(child.age).toBe(2)
   })
 
   it('should return runner when call effect', () => {

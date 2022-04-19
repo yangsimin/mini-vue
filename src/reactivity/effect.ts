@@ -1,7 +1,7 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-18 14:43:10
- * @LastEditTime: 2022-04-19 13:58:26
+ * @LastEditTime: 2022-04-19 14:53:18
  * @LastEditors: simonyang
  * @Description:
  */
@@ -11,7 +11,7 @@ let activeEffect
 let shouldTrack
 export class ReactiveEffect {
   private _fn: any
-  deps: Array<Set<ReactiveEffect>> = []
+  deps = []
   isActive = true
   onStop?: () => void
   public scheduler: Function | undefined
@@ -58,14 +58,12 @@ export function track(target, key) {
 
   let depsMap = targetMap.get(target)
   if (!depsMap) {
-    depsMap = new Map()
-    targetMap.set(target, depsMap)
+    targetMap.set(target, (depsMap = new Map()))
   }
 
   let dep = depsMap.get(key)
   if (!dep) {
-    dep = new Set()
-    depsMap.set(key, dep)
+    depsMap.set(key, (dep = new Set()))
   }
   trackEffects(dep)
 }

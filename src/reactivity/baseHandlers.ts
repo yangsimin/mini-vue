@@ -1,7 +1,7 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-18 20:13:32
- * @LastEditTime: 2022-04-19 09:54:17
+ * @LastEditTime: 2022-04-19 14:22:17
  * @LastEditors: simonyang
  * @Description:
  */
@@ -31,13 +31,14 @@ function createGetter(isReadonly = false, isShallow = false) {
       return res
     }
 
+    if (!isReadonly) {
+      track(target, key)
+    }
+
     if (isObject(res)) {
       return isReadonly ? readonly(res) : reactive(res)
     }
 
-    if (!isReadonly) {
-      track(target, key)
-    }
     return res
   }
 }

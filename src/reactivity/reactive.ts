@@ -1,7 +1,7 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-18 14:32:44
- * @LastEditTime: 2022-04-19 10:03:30
+ * @LastEditTime: 2022-04-19 14:43:26
  * @LastEditors: simonyang
  * @Description:
  */
@@ -30,17 +30,11 @@ export function shallowReadonly(raw) {
 }
 
 export function isReactive(value) {
-  if (!value) {
-    return false
-  }
-  return !!value[ReactiveFlags.IS_REACTIVE]
+  return !!(value && value[ReactiveFlags.IS_REACTIVE])
 }
 
 export function isReadonly(value) {
-  if (!value) {
-    return false
-  }
-  return !!value[ReactiveFlags.IS_READONLY]
+  return !!(value && value[ReactiveFlags.IS_READONLY])
 }
 
 export function isProxy(value) {
