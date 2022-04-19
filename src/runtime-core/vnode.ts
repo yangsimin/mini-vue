@@ -1,7 +1,7 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-19 15:54:28
- * @LastEditTime: 2022-04-19 15:54:29
+ * @LastEditTime: 2022-04-19 18:23:14
  * @LastEditors: simonyang
  * @Description:
  */
@@ -10,6 +10,7 @@ export function createVNode(type, props?, children?) {
     type,
     props,
     children,
+    el: null,
   }
   return vnode
 }
