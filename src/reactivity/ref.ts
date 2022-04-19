@@ -1,7 +1,7 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-19 10:07:59
- * @LastEditTime: 2022-04-19 11:41:51
+ * @LastEditTime: 2022-04-19 12:15:11
  * @LastEditors: simonyang
  * @Description:
  */
@@ -14,6 +14,8 @@ class RefImpl {
   private _value: any
   public dep
   private _rawValue: any
+  public __v_isRef = true
+
   constructor(value) {
     this._rawValue = value
     this._value = convert(value)
@@ -45,4 +47,26 @@ function trackRefValue(ref) {
 }
 export function ref(value) {
   return new RefImpl(value)
+}
+
+export function isRef(ref) {
+  return !!ref.__v_isRef
+}
+
+export function unRef(ref) {
+  return isRef(ref) ? ref.value : ref
+}
+
+export function proxyRefs(objectWithRefs) {
+  return new Proxy(objectWithRefs, {
+    get(target, key) {
+      return unRef(Reflect.get(target, key))
+    },
+    set(target, key, newValue) {
+      if (isRef(Reflect.get(target, key)) && !isRef(newValue)) {
+        return (target[key].value = newValue)
+      }
+      return Reflect.set(target, key, newValue)
+    },
+  })
 }
