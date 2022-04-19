@@ -1,11 +1,11 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-18 19:56:17
- * @LastEditTime: 2022-04-18 22:37:13
+ * @LastEditTime: 2022-04-19 10:43:18
  * @LastEditors: simonyang
  * @Description:
  */
-import { isReactive, isReadonly, readonly } from '../reactive'
+import { isReactive, isReadonly, isProxy, readonly } from '../reactive'
 
 describe('readonly', () => {
   it('happy path', () => {
@@ -14,11 +14,12 @@ describe('readonly', () => {
     expect(wrapped).not.toBe(original)
     expect(wrapped.foo).toBe(1)
 
-    wrapped.foo = 2
-    expect(wrapped.foo).toBe(1)
-
     expect(isReadonly(wrapped)).toBe(true)
     expect(isReactive(original)).toBe(false)
+    expect(isReadonly(wrapped.bar)).toBe(true)
+    expect(isReadonly(original.bar)).toBe(false)
+
+    expect(isProxy(wrapped)).toBe(true)
   })
 
   it('warn then call set', () => {

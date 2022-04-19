@@ -1,7 +1,7 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-18 14:25:35
- * @LastEditTime: 2022-04-18 23:23:27
+ * @LastEditTime: 2022-04-19 09:42:48
  * @LastEditors: simonyang
  * @Description:
  */
@@ -23,6 +23,21 @@ describe('effect', () => {
     // update
     user.age += 1
     expect(nextAge).toBe(12)
+  })
+  it.skip('happy path2', () => {
+    const person = reactive({
+      age: 10,
+      child: {
+        age: 1,
+      },
+    })
+    let child
+    effect(() => {
+      child = person.child
+    })
+    expect(child.age).toBe(1)
+    person.child = null
+    expect(child).toBe(null)
   })
 
   it('should return runner when call effect', () => {

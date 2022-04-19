@@ -1,12 +1,16 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-18 14:32:44
- * @LastEditTime: 2022-04-18 22:35:06
+ * @LastEditTime: 2022-04-19 10:03:30
  * @LastEditors: simonyang
  * @Description:
  */
 
-import { mutableHandlers, readonlyHandlers } from './baseHandlers'
+import {
+  mutableHandlers,
+  readonlyHandlers,
+  shallowReadonlyHandlers,
+} from './baseHandlers'
 
 export const enum ReactiveFlags {
   IS_REACTIVE = '__v_isReactive',
@@ -21,6 +25,10 @@ export function readonly(raw) {
   return createActiveObject(raw, readonlyHandlers)
 }
 
+export function shallowReadonly(raw) {
+  return createActiveObject(raw, shallowReadonlyHandlers)
+}
+
 export function isReactive(value) {
   if (!value) {
     return false
@@ -33,6 +41,10 @@ export function isReadonly(value) {
     return false
   }
   return !!value[ReactiveFlags.IS_READONLY]
+}
+
+export function isProxy(value) {
+  return isReactive(value) || isReadonly(value)
 }
 
 function createActiveObject(raw: any, baseHandlers) {

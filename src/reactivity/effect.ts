@@ -1,7 +1,7 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-18 14:43:10
- * @LastEditTime: 2022-04-19 00:04:26
+ * @LastEditTime: 2022-04-19 10:58:41
  * @LastEditors: simonyang
  * @Description:
  */
@@ -65,14 +65,17 @@ export function track(target, key) {
     dep = new Set()
     depsMap.set(key, dep)
   }
+  trackEffects(dep)
+}
 
+export function trackEffects(dep) {
   if (dep.has(activeEffect)) return
 
   dep.add(activeEffect)
   activeEffect.deps.push(dep)
 }
 
-function isTracking() {
+export function isTracking() {
   return shouldTrack && activeEffect !== undefined
 }
 
@@ -80,6 +83,10 @@ export function trigger(target, key) {
   let depsMap = targetMap.get(target)
   let dep = depsMap.get(key)
 
+  triggerEffects(dep)
+}
+
+export function triggerEffects(dep) {
   for (const effect of dep) {
     if (effect.scheduler) {
       effect.scheduler()
