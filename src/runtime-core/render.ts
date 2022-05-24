@@ -1,7 +1,7 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-19 15:57:14
- * @LastEditTime: 2022-04-19 21:54:23
+ * @LastEditTime: 2022-05-24 14:42:47
  * @LastEditors: simonyang
  * @Description:
  */
@@ -18,6 +18,7 @@ export function render(vnode, container) {
 function patch(vnode, container) {
   const { shapeFlag } = vnode
   if (shapeFlag & ShapeFlags.ELEMENT) {
+    // vnode -> element -> mountElement
     // vnode.type 为 'div' 之类, 则为 element 类型的 vnode
     processElement(vnode, container)
   } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
@@ -48,7 +49,14 @@ function mountElement(vnode: any, container: any) {
   const { props } = vnode
   for (const key in props) {
     const val = props[key]
-    el.setAttribute(key, val)
+    console.log(key)
+    const isOn = (key: string) => /^on[A-Z]/.test(key)
+    if (isOn(key)) {
+      const event = key.slice(2).toLowerCase()
+      el.addEventListener(event, val)
+    } else {
+      el.setAttribute(key, val)
+    }
   }
 
   container.append(el)
@@ -60,6 +68,7 @@ function mountChildren(vnode, container) {
   })
 }
 
+// 处理组件
 function processComponent(vnode: any, container: any) {
   // mount
   mountComponent(vnode, container)
@@ -79,7 +88,7 @@ function setupRenderEffect(instance: any, initialVNode, container: any) {
   const subTree = instance.render.call(proxy)
 
   // vnode -> patch
-  // vnode -> element -> mountElement
   patch(subTree, container)
+  // 所有 el 都挂载完毕之后
   initialVNode.el = subTree.el
 }

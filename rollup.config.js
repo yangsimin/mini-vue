@@ -1,7 +1,7 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-19 16:41:06
- * @LastEditTime: 2022-04-19 17:15:27
+ * @LastEditTime: 2022-05-24 11:49:17
  * @LastEditors: simonyang
  * @Description:
  */
@@ -11,11 +11,11 @@ export default {
   input: './src/index.ts',
   output: [
     // 1. cjs -> commonjs
-    // 2. esm
     {
       format: 'cjs',
       file: pkg.main,
     },
+    // 2. esm
     {
       format: 'es',
       file: pkg.module,

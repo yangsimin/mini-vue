@@ -1,11 +1,12 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-18 14:32:44
- * @LastEditTime: 2022-04-19 14:43:26
+ * @LastEditTime: 2022-05-24 15:13:46
  * @LastEditors: simonyang
  * @Description:
  */
 
+import { isObject } from '../shared/index'
 import {
   mutableHandlers,
   readonlyHandlers,
@@ -41,6 +42,10 @@ export function isProxy(value) {
   return isReactive(value) || isReadonly(value)
 }
 
-function createActiveObject(raw: any, baseHandlers) {
-  return new Proxy(raw, baseHandlers)
+function createActiveObject(target: any, baseHandlers) {
+  if (!isObject(target)) {
+    console.warn(`target ${target} must be an object`)
+    return target
+  }
+  return new Proxy(target, baseHandlers)
 }
