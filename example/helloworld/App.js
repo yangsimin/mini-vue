@@ -1,7 +1,7 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-19 15:16:46
- * @LastEditTime: 2022-05-24 14:53:31
+ * @LastEditTime: 2022-05-24 18:38:54
  * @LastEditors: simonyang
  * @Description:
  */
@@ -17,14 +17,17 @@ export const App = {
       {
         id: 'root',
         class: ['red', 'hard'],
-        onClick() {
-          console.log('click')
-        },
       },
       [
         h('div', {}, 'hi,' + this.msg),
         h(Foo, {
           count: 1,
+          onAdd(a, b) {
+            console.log('onAdd', a, b)
+          },
+          onAddFoo(a, b) {
+            console.log('onAddFoo', a, b)
+          },
         }),
       ]
       // 'hi, ' + this.msg

@@ -1,7 +1,7 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-18 19:48:51
- * @LastEditTime: 2022-05-24 15:39:02
+ * @LastEditTime: 2022-05-25 08:59:26
  * @LastEditors: simonyang
  * @Description:
  */
@@ -16,3 +16,17 @@ export function hasChanged(val, newValue) {
 }
 export const hasOwn = (val, key) =>
   Object.prototype.hasOwnProperty.call(val, key)
+
+export const camelize = (str: string) => {
+  return str.replace(/-(\w)/g, (_, c: string) => {
+    return c ? c.toUpperCase() : ''
+  })
+}
+
+export const capitalize = (str: string) => {
+  return str[0].toUpperCase() + str.slice(1)
+}
+
+export const toHandlerKey = (str: string) => {
+  return str ? 'on' + capitalize(str) : ''
+}
