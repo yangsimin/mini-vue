@@ -1,11 +1,15 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-19 15:54:28
- * @LastEditTime: 2022-05-25 11:31:24
+ * @LastEditTime: 2022-05-26 08:42:43
  * @LastEditors: simonyang
  * @Description:
  */
 import { ShapeFlags } from '../shared/ShapeFlags'
+
+export const Fragment = Symbol('Fragment')
+export const Text = Symbol('Text')
+
 export function createVNode(type, props?, children?) {
   const vnode = {
     type,
@@ -26,6 +30,9 @@ export function createVNode(type, props?, children?) {
     }
   }
   return vnode
+}
+export function createTextVNode(text: string) {
+  return createVNode(Text, {}, text)
 }
 function getShapeFlag(type: any) {
   return typeof type === 'string'

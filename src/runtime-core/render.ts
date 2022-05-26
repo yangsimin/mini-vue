@@ -1,7 +1,7 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-19 15:57:14
- * @LastEditTime: 2022-05-25 10:54:05
+ * @LastEditTime: 2022-05-26 08:57:27
  * @LastEditors: simonyang
  * @Description:
  */
@@ -9,6 +9,7 @@
 import { isObject } from '../shared/index'
 import { ShapeFlags } from '../shared/ShapeFlags'
 import { createComponentInstance, setupComponent } from './component'
+import { Fragment, Text } from './vnode'
 
 export function render(vnode, container) {
   patch(vnode, container)
@@ -16,15 +17,36 @@ export function render(vnode, container) {
 
 // 递归处理 component / element
 function patch(vnode, container) {
-  const { shapeFlag } = vnode
-  if (shapeFlag & ShapeFlags.ELEMENT) {
-    // vnode -> element -> mountElement
-    // vnode.type 为 'div' 之类, 则为 element 类型的 vnode
-    processElement(vnode, container)
-  } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
-    // vnode.type 为 对象, 则为组件类型的 vnode
-    processComponent(vnode, container)
+  const { type, shapeFlag } = vnode
+
+  // Fragment -> 只渲染 children
+  switch (type) {
+    case Fragment:
+      processFragment(vnode, container)
+      break
+    case Text:
+      processText(vnode, container)
+      break
+    default:
+      if (shapeFlag & ShapeFlags.ELEMENT) {
+        // vnode -> element -> mountElement
+        // vnode.type 为 'div' 之类, 则为 element 类型的 vnode
+        processElement(vnode, container)
+      } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
+        // vnode.type 为 对象, 则为组件类型的 vnode
+        processComponent(vnode, container)
+      }
   }
+}
+
+function processFragment(vnode: any, container: any) {
+  mountChildren(vnode, container)
+}
+
+function processText(vnode: any, container: any) {
+  const { children } = vnode
+  const textNode = (vnode.el = document.createTextNode(children))
+  container.append(textNode)
 }
 
 function processElement(vnode: any, container: any) {
