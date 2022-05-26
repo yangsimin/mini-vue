@@ -1,7 +1,7 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-19 15:54:28
- * @LastEditTime: 2022-04-19 21:50:37
+ * @LastEditTime: 2022-05-25 11:31:24
  * @LastEditors: simonyang
  * @Description:
  */
@@ -18,6 +18,12 @@ export function createVNode(type, props?, children?) {
     vnode.shapeFlag |= ShapeFlags.TEXT_CHILDREN
   } else if (Array.isArray(children)) {
     vnode.shapeFlag |= ShapeFlags.ARRAY_CHILDREN
+  }
+
+  if (vnode.shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
+    if (typeof children === 'object') {
+      vnode.shapeFlag |= ShapeFlags.SLOT_CHILDREN
+    }
   }
   return vnode
 }

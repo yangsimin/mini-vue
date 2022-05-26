@@ -1,7 +1,7 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-19 15:16:46
- * @LastEditTime: 2022-05-24 18:38:54
+ * @LastEditTime: 2022-05-25 11:19:56
  * @LastEditors: simonyang
  * @Description:
  */
@@ -10,33 +10,20 @@ import { Foo } from './Foo.js'
 
 window.self = null
 export const App = {
+  name: 'App',
   render() {
-    window.self = this
-    return h(
-      'div',
+    const app = h('div', {}, 'App')
+    const foo = h(
+      Foo,
+      {},
       {
-        id: 'root',
-        class: ['red', 'hard'],
-      },
-      [
-        h('div', {}, 'hi,' + this.msg),
-        h(Foo, {
-          count: 1,
-          onAdd(a, b) {
-            console.log('onAdd', a, b)
-          },
-          onAddFoo(a, b) {
-            console.log('onAddFoo', a, b)
-          },
-        }),
-      ]
-      // 'hi, ' + this.msg
-      // [h('p', { class: 'red' }, 'hi'), h('p', { class: 'blue' }, this.msg)]
+        header: ({ age }) => h('header', {}, 'header' + age),
+        footer: () => h('footer', {}, 'footer'),
+      }
     )
+    return h('div', {}, [app, foo])
   },
   setup() {
-    return {
-      msg: 'mini-vue-again',
-    }
+    return {}
   },
 }
