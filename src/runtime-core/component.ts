@@ -7,11 +7,12 @@ import { initSlots } from './componentSlots'
 /*
  * @Author: simonyang
  * @Date: 2022-04-19 16:02:27
- * @LastEditTime: 2022-05-27 10:06:13
+ * @LastEditTime: 2022-05-27 11:20:38
  * @LastEditors: simonyang
  * @Description:
  */
-export function createComponentInstance(vnode) {
+export function createComponentInstance(vnode, parent) {
+  console.log('createComponentInstance', parent)
   const component = {
     vnode,
     type: vnode.type,
@@ -21,6 +22,8 @@ export function createComponentInstance(vnode) {
     props: {},
     emit: () => {},
     slots: {},
+    provides: parent ? parent.provides : {},
+    parent,
   }
   component.emit = emit.bind(null, component) as any
   return component
