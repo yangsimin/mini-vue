@@ -1,7 +1,7 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-19 15:57:14
- * @LastEditTime: 2022-05-31 14:11:35
+ * @LastEditTime: 2022-05-31 14:56:59
  * @LastEditors: simonyang
  * @Description:
  */
@@ -183,6 +183,48 @@ export function createRenderer(options) {
       }
     } else {
       // 处理中间乱序的三种情况, 创建新的/删除老的/移动
+
+      let s1 = i
+      let s2 = i
+      const toBePatched = e2 - s2 + 1
+      let patched = 0
+      const keyToNewIndexMap = new Map()
+
+      // 初始化映射表, 存放新节点对应的 key
+      for (let i = s2; i <= e2; i++) {
+        const nextChild = c2[i]
+        keyToNewIndexMap.set(nextChild.key, i)
+      }
+      
+      // 1. 删除
+      for (let i = s1; i <= e1; i++) {
+        const prevChild = c1[i]
+
+        // 如果所有新节点已 patch, 剩余的老节点都为冗余节点, 可直接删除
+        if (patched >= toBePatched) {
+          hostRemove(prevChild.el)
+          continue
+        }
+
+        let newIndex
+        if (prevChild.key !== null) {
+          newIndex = keyToNewIndexMap.get(prevChild.key)
+        } else {
+          for (let j = s2; j <= e2; j++) {
+            if (isSameVNodeType(prevChild, c2[j])) {
+              newIndex = j
+              break
+            }
+          }
+        }
+
+        if (newIndex === undefined) {
+          hostRemove(prevChild.el)
+        } else {
+          patch(prevChild, c2[newIndex], container, parentComponent, null)
+          patched++
+        }
+      }
     }
   }
 
