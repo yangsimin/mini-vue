@@ -1,7 +1,7 @@
 /*
  * @Author: simonyang
  * @Date: 2022-05-27 11:58:43
- * @LastEditTime: 2022-05-31 10:05:14
+ * @LastEditTime: 2022-05-31 12:22:57
  * @LastEditors: simonyang
  * @Description:
  */
@@ -23,8 +23,8 @@ function patchProp(el, key, prevVal, nextVal) {
     }
   }
 }
-function insert(el, parent) {
-  parent.append(el)
+function insert(child, parent, anchor) {
+  parent.insertBefore(child, anchor || null)
 }
 
 function remove(child) {
