@@ -1,9 +1,13 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-19 15:57:14
- * @LastEditTime: 2022-05-31 14:56:59
+ * @LastEditTime: 2022-05-31 16:57:37
  * @LastEditors: simonyang
  * @Description:
+ * 性能优化点:
+ * 1. 分别对左右两端进行对比, 取中间不同的部分进行对比, 缩小比对范围
+ * 2. 使用了<最大递增子序列算法>, 找出相对位置稳定不变的子序列, 尽可能减少节点的移动
+ * 3. 使用节点的 key 创建新老节点映射表, 缩小查找的时间复杂度
  */
 
 import { effect } from '../reactivity/effect'
@@ -189,14 +193,23 @@ export function createRenderer(options) {
       const toBePatched = e2 - s2 + 1
       let patched = 0
       const keyToNewIndexMap = new Map()
+      const newIndexToOldIndexMap = new Array(toBePatched)
+      let moved = false
+      let maxNewIndexSoFar = 0
+
+      // 初始化映射表, 对应的中间需要对比的节点的老索引
+      for (let i = 0; i < toBePatched; i++) {
+        newIndexToOldIndexMap[i] = 0
+      }
 
       // 初始化映射表, 存放新节点对应的 key
       for (let i = s2; i <= e2; i++) {
         const nextChild = c2[i]
         keyToNewIndexMap.set(nextChild.key, i)
       }
-      
-      // 1. 删除
+
+      // 1.1 若找到与新节点对应的旧节点, 则调用 patch 挂载节点
+      // 1.2 删除无映射的旧节点
       for (let i = s1; i <= e1; i++) {
         const prevChild = c1[i]
 
@@ -221,8 +234,41 @@ export function createRenderer(options) {
         if (newIndex === undefined) {
           hostRemove(prevChild.el)
         } else {
+          if (newIndex >= maxNewIndexSoFar) {
+            maxNewIndexSoFar = newIndex
+          } else {
+            moved = true
+          }
+          // [new] = old + 1
+          newIndexToOldIndexMap[newIndex - s2] = i + 1
           patch(prevChild, c2[newIndex], container, parentComponent, null)
           patched++
+        }
+      }
+
+      // 2.1 找到新节点中对应老节点的索引
+      // 2.2 找到最长的递增子序列, 只移动非子序列中的节点, 减少移动次数
+      // 2.3 由于使用 insertBefore      插入, 需要确保右边锚点元素位置确定, 所以从右遍历移动
+      const increasingNewIndexSequence = moved
+        ? getSequence(newIndexToOldIndexMap)
+        : []
+      let j = increasingNewIndexSequence.length - 1
+
+      for (let i = toBePatched - 1; i >= 0; i--) {
+        const nextIndex = i + s2
+        const nextChild = c2[nextIndex]
+        const anchor = nextIndex + 1 < c2.length ? c2[nextIndex + 1].el : null
+
+        // 需要创建节点
+        if (newIndexToOldIndexMap[i] === 0) {
+          patch(null, nextChild, container, parentComponent, anchor)
+        } else if (moved) {
+          if (j < 0 || i !== increasingNewIndexSequence[j]) {
+            console.log('移动位置')
+            hostInsert(nextChild.el, container, anchor)
+          } else {
+            j--
+          }
         }
       }
     }
@@ -346,4 +392,45 @@ export function createRenderer(options) {
   return {
     createApp: createAppAPI(render),
   }
+}
+
+function getSequence(arr) {
+  const p = arr.slice()
+  const result = [0]
+  let i, j, u, v, c
+  const len = arr.length
+  for (i = 0; i < len; i++) {
+    const arrI = arr[i]
+    if (arrI !== 0) {
+      j = result[result.length - 1]
+      if (arr[j] < arrI) {
+        p[i] = j
+        result.push(i)
+        continue
+      }
+      u = 0
+      v = result.length - 1
+      while (u < v) {
+        c = (u + v) >> 1
+        if (arr[result[c]] < arrI) {
+          u = c + 1
+        } else {
+          v = c
+        }
+      }
+      if (arrI < arr[result[u]]) {
+        if (u > 0) {
+          p[i] = result[u - 1]
+        }
+        result[u] = i
+      }
+    }
+  }
+  u = result.length
+  v = result[u - 1]
+  while (u-- > 0) {
+    result[u] = v
+    v = p[v]
+  }
+  return result
 }

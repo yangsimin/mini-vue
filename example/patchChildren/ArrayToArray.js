@@ -1,7 +1,7 @@
 /*
  * @Author: simonyang
  * @Date: 2022-05-31 09:16:48
- * @LastEditTime: 2022-05-31 14:53:56
+ * @LastEditTime: 2022-05-31 16:46:02
  * @LastEditors: simonyang
  * @Description:
  */
@@ -106,24 +106,92 @@ import { ref, h } from '../../lib/guide-mini-vue.esm.js'
 // 5.1.1
 // a b (c e d) f g
 // a b (e c) f g
+// const prevChildren = [
+//   h('p', { key: 'A' }, 'A'),
+//   h('p', { key: 'B' }, 'B'),
+//   h('p', { key: 'C', id: 'c-prev' }, 'C'),
+//   h('p', { key: 'E' }, 'E'),
+//   h('p', { key: 'D' }, 'D'),
+//   h('p', { key: 'F' }, 'F'),
+//   h('p', { key: 'G' }, 'G'),
+// ]
+// const nextChildren = [
+//   h('p', { key: 'A' }, 'A'),
+//   h('p', { key: 'B' }, 'B'),
+//   h('p', { key: 'E' }, 'E'),
+//   h('p', { key: 'C', id: 'c-next' }, 'C'),
+//   h('p', { key: 'F' }, 'F'),
+//   h('p', { key: 'G' }, 'G'),
+// ]
+
+// 2 移动
+// a b (c d e) f g
+// a b (e c d) f g
+// const prevChildren = [
+//   h('p', { key: 'A' }, 'A'),
+//   h('p', { key: 'B' }, 'B'),
+//   h('p', { key: 'C', id: 'c-prev' }, 'C'),
+//   h('p', { key: 'D' }, 'D'),
+//   h('p', { key: 'E' }, 'E'),
+//   h('p', { key: 'F' }, 'F'),
+//   h('p', { key: 'G' }, 'G'),
+// ]
+// const nextChildren = [
+//   h('p', { key: 'A' }, 'A'),
+//   h('p', { key: 'B' }, 'B'),
+//   h('p', { key: 'E' }, 'E'),
+//   h('p', { key: 'C', id: 'c-next' }, 'C'),
+//   h('p', { key: 'D' }, 'D'),
+//   h('p', { key: 'F' }, 'F'),
+//   h('p', { key: 'G' }, 'G'),
+// ]
+
+// 3 创建新节点
+// a b (c e) f g
+// a b (e c d) f g
+// const prevChildren = [
+//   h('p', { key: 'A' }, 'A'),
+//   h('p', { key: 'B' }, 'B'),
+//   h('p', { key: 'C', id: 'c-prev' }, 'C'),
+//   h('p', { key: 'E' }, 'E'),
+//   h('p', { key: 'F' }, 'F'),
+//   h('p', { key: 'G' }, 'G'),
+// ]
+// const nextChildren = [
+//   h('p', { key: 'A' }, 'A'),
+//   h('p', { key: 'B' }, 'B'),
+//   h('p', { key: 'E' }, 'E'),
+//   h('p', { key: 'C', id: 'c-next' }, 'C'),
+//   h('p', { key: 'D' }, 'D'),
+//   h('p', { key: 'F' }, 'F'),
+//   h('p', { key: 'G' }, 'G'),
+// ]
+
+// 综合例子
+// a,b,(c,d,e,z),f,g
+// a,b,(d,c,y,e),f,g
+
 const prevChildren = [
   h('p', { key: 'A' }, 'A'),
   h('p', { key: 'B' }, 'B'),
-  h('p', { key: 'C', id: 'c-prev' }, 'C'),
-  h('p', { key: 'E' }, 'E'),
+  h('p', { key: 'C' }, 'C'),
   h('p', { key: 'D' }, 'D'),
-  h('p', { key: 'F' }, 'F'),
-  h('p', { key: 'G' }, 'G'),
-]
-const nextChildren = [
-  h('p', { key: 'A' }, 'A'),
-  h('p', { key: 'B' }, 'B'),
   h('p', { key: 'E' }, 'E'),
-  h('p', { key: 'C', id: 'c-next' }, 'C'),
+  h('p', { key: 'Z' }, 'Z'),
   h('p', { key: 'F' }, 'F'),
   h('p', { key: 'G' }, 'G'),
 ]
 
+const nextChildren = [
+  h('p', { key: 'A' }, 'A'),
+  h('p', { key: 'B' }, 'B'),
+  h('p', { key: 'D' }, 'D'),
+  h('p', { key: 'C' }, 'C'),
+  h('p', { key: 'Y' }, 'Y'),
+  h('p', { key: 'E' }, 'E'),
+  h('p', { key: 'F' }, 'F'),
+  h('p', { key: 'G' }, 'G'),
+]
 export default {
   setup() {
     const isChange = window.isChange
