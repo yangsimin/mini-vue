@@ -1,11 +1,13 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-18 19:48:51
- * @LastEditTime: 2022-05-25 08:59:26
+ * @LastEditTime: 2022-05-31 09:11:42
  * @LastEditors: simonyang
  * @Description:
  */
 export const extend = Object.assign
+
+export const EMPTY_OBJ = {}
 
 export function isObject(val) {
   return val !== null && typeof val === 'object'

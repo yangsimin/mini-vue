@@ -1,13 +1,12 @@
 /*
  * @Author: simonyang
  * @Date: 2022-05-27 14:27:41
- * @LastEditTime: 2022-05-27 14:49:21
+ * @LastEditTime: 2022-05-27 15:28:41
  * @LastEditors: simonyang
  * @Description:
  */
 import { createRenderer } from '../../lib/guide-mini-vue.esm.js'
 import { App } from './App.js'
-console.log(PIXI)
 
 const game = new PIXI.Application({
   width: 500,
@@ -22,7 +21,6 @@ const renderer = createRenderer({
       rect.beginFill(0xff0000)
       rect.drawRect(0, 0, 100, 100)
       rect.endFill()
-      console.log(rect)
       return rect
     }
   },
