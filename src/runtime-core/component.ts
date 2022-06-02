@@ -8,7 +8,7 @@ import { initSlots } from './componentSlots'
 /*
  * @Author: simonyang
  * @Date: 2022-04-19 16:02:27
- * @LastEditTime: 2022-05-27 15:33:44
+ * @LastEditTime: 2022-05-31 18:25:30
  * @LastEditors: simonyang
  * @Description:
  */
@@ -16,6 +16,7 @@ export function createComponentInstance(vnode, parent) {
   const component = {
     vnode,
     type: vnode.type,
+    next: null,
     setupState: {},
     render: {},
     proxy: {},

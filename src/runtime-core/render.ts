@@ -1,7 +1,7 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-19 15:57:14
- * @LastEditTime: 2022-05-31 16:57:37
+ * @LastEditTime: 2022-06-02 09:53:44
  * @LastEditors: simonyang
  * @Description:
  * 性能优化点:
@@ -14,7 +14,9 @@ import { effect } from '../reactivity/effect'
 import { EMPTY_OBJ } from '../shared'
 import { ShapeFlags } from '../shared/ShapeFlags'
 import { createComponentInstance, setupComponent } from './component'
+import { shouldUpdateComponent } from './componentUpdateUtils'
 import { createAppAPI } from './createApp'
+import { queueJobs } from './scheduler'
 import { Fragment, Text } from './vnode'
 
 export function createRenderer(options) {
@@ -140,7 +142,6 @@ export function createRenderer(options) {
     function isSameVNodeType(n1, n2) {
       return n1.type === n2.type && n1.key === n2.key
     }
-    debugger
     // 左侧对比
     while (i <= e1 && i <= e2) {
       const n1 = c1[i]
@@ -340,10 +341,24 @@ export function createRenderer(options) {
     parentComponent,
     anchor
   ) {
-    // mount
-    mountComponent(n2, container, parentComponent, anchor)
+    if (!n1) {
+      // mount
+      mountComponent(n2, container, parentComponent, anchor)
+    } else {
+      // update
+      updateComponent(n1, n2)
+    }
+  }
 
-    // update
+  function updateComponent(n1, n2) {
+    const instance = (n2.component = n1.component)
+    if (shouldUpdateComponent(n1, n2)) {
+      instance.next = n2
+      instance.update()
+    } else {
+      n2.el = n1.el
+      instance.vnode = n2
+    }
   }
 
   function mountComponent(
@@ -352,7 +367,10 @@ export function createRenderer(options) {
     parentComponent,
     anchor
   ) {
-    const instance = createComponentInstance(initialVNode, parentComponent)
+    const instance = (initialVNode.component = createComponentInstance(
+      initialVNode,
+      parentComponent
+    ))
     setupComponent(instance)
     setupRenderEffect(instance, initialVNode, container, anchor)
   }
@@ -363,35 +381,55 @@ export function createRenderer(options) {
     container: any,
     anchor
   ) {
-    effect(() => {
-      if (!instance.isMounted) {
-        const { proxy } = instance
-        // vnode
-        const subTree = (instance.subTree = instance.render.call(proxy))
-        console.log('init')
-        // vnode -> patch
-        patch(null, subTree, container, instance, anchor)
-        // 所有 el 都挂载完毕之后
-        initialVNode.el = subTree.el
+    instance.update = effect(
+      () => {
+        if (!instance.isMounted) {
+          const { proxy } = instance
+          // vnode
+          const subTree = (instance.subTree = instance.render.call(proxy))
+          console.log('init')
+          // vnode -> patch
+          patch(null, subTree, container, instance, anchor)
+          // 所有 el 都挂载完毕之后
+          initialVNode.el = subTree.el
 
-        instance.isMounted = true
-      } else {
-        console.log('update')
+          instance.isMounted = true
+        } else {
+          console.log('update')
 
-        const { proxy } = instance
-        const subTree = instance.render.call(proxy)
-        const prevSubTree = instance.subTree
-        instance.subTree = subTree
-        console.log('current', subTree)
-        console.log('prev', prevSubTree)
-        patch(prevSubTree, subTree, container, instance, anchor)
+          const { next, vnode } = instance
+          if (next) {
+            next.el = vnode.el
+            updateComponentPreRender(instance, next)
+          }
+          const { proxy } = instance
+          const subTree = instance.render.call(proxy)
+          const prevSubTree = instance.subTree
+          instance.subTree = subTree
+          console.log('current', subTree)
+          console.log('prev', prevSubTree)
+          patch(prevSubTree, subTree, container, instance, anchor)
+        }
+      },
+      {
+        scheduler() {
+          console.log('update - scheduler')
+          // instance.update()
+          queueJobs(instance.update)
+        },
       }
-    })
+    )
   }
 
   return {
     createApp: createAppAPI(render),
   }
+}
+
+function updateComponentPreRender(instance, nextVNode) {
+  instance.vnode = nextVNode
+  instance.next = null
+  instance.props = nextVNode.props
 }
 
 function getSequence(arr) {

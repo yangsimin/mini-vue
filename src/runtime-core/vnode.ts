@@ -1,7 +1,7 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-19 15:54:28
- * @LastEditTime: 2022-05-31 11:29:55
+ * @LastEditTime: 2022-05-31 17:58:12
  * @LastEditors: simonyang
  * @Description:
  */
@@ -15,6 +15,7 @@ export function createVNode(type, props?, children?) {
     type,
     props,
     children,
+    component: null,
     key: props && props.key,
     shapeFlag: getShapeFlag(type),
     el: null,
