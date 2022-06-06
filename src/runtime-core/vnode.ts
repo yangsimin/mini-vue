@@ -1,7 +1,7 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-19 15:54:28
- * @LastEditTime: 2022-05-31 17:58:12
+ * @LastEditTime: 2022-06-06 19:51:45
  * @LastEditors: simonyang
  * @Description:
  */
@@ -10,6 +10,7 @@ import { ShapeFlags } from '../shared/ShapeFlags'
 export const Fragment = Symbol('Fragment')
 export const Text = Symbol('Text')
 
+export { createVNode as createElementVNode }
 export function createVNode(type, props?, children?) {
   const vnode = {
     type,

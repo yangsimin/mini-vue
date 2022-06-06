@@ -1,7 +1,7 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-19 15:57:14
- * @LastEditTime: 2022-06-02 09:53:44
+ * @LastEditTime: 2022-06-06 19:47:34
  * @LastEditors: simonyang
  * @Description:
  * 性能优化点:
@@ -386,7 +386,10 @@ export function createRenderer(options) {
         if (!instance.isMounted) {
           const { proxy } = instance
           // vnode
-          const subTree = (instance.subTree = instance.render.call(proxy))
+          const subTree = (instance.subTree = instance.render.call(
+            proxy,
+            proxy
+          ))
           console.log('init')
           // vnode -> patch
           patch(null, subTree, container, instance, anchor)
@@ -403,7 +406,7 @@ export function createRenderer(options) {
             updateComponentPreRender(instance, next)
           }
           const { proxy } = instance
-          const subTree = instance.render.call(proxy)
+          const subTree = instance.render.call(proxy, proxy)
           const prevSubTree = instance.subTree
           instance.subTree = subTree
           console.log('current', subTree)

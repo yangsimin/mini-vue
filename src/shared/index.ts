@@ -1,16 +1,21 @@
 /*
  * @Author: simonyang
  * @Date: 2022-04-18 19:48:51
- * @LastEditTime: 2022-05-31 09:11:42
+ * @LastEditTime: 2022-06-06 19:50:03
  * @LastEditors: simonyang
  * @Description:
  */
+export * from './toDisplayString'
 export const extend = Object.assign
 
 export const EMPTY_OBJ = {}
 
 export function isObject(val) {
   return val !== null && typeof val === 'object'
+}
+
+export function isString(val) {
+  return typeof val === 'string'
 }
 
 export function hasChanged(val, newValue) {
