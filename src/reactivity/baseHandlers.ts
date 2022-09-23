@@ -10,7 +10,7 @@ import { extend, isObject } from '../shared'
 import { track, trigger } from './effect'
 import { reactive, readonly, ReactiveFlags } from './reactive'
 
-// 缓存 get/set 函数
+// 缓存 get/set 函数，避免每次都重新创建函数
 const get = createGetter()
 const set = createSetter()
 const readonlyGet = createGetter(true)

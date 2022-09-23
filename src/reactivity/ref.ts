@@ -13,6 +13,8 @@ import { reactive } from './reactive'
 class RefImpl {
   private _value: any
   public dep
+  // 当传入值为对象时，会使用 reactive() 包裹
+  // 保存原始值主要是为了方便后续新老对象的对比
   private _rawValue: any
   public __v_isRef = true
 
@@ -26,13 +28,14 @@ class RefImpl {
     trackRefValue(this)
     return this._value
   }
+
   set value(newValue) {
     if (!hasChanged(this._rawValue, newValue)) return
 
     this._rawValue = newValue
     this._value = convert(newValue)
     // 一定先修改值, 再通知
-    triggerEffects(this.dep)
+    triggerRefValue(this)
   }
 }
 
@@ -40,7 +43,11 @@ function convert(value) {
   return isObject(value) ? reactive(value) : value
 }
 
-function trackRefValue(ref) {
+export function triggerRefValue(ref) {
+  triggerEffects(ref.dep)
+}
+
+export function trackRefValue(ref) {
   if (isTracking()) {
     trackEffects(ref.dep)
   }

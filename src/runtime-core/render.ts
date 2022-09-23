@@ -33,6 +33,7 @@ export function createRenderer(options) {
   }
 
   // 递归处理 component / element
+  // n1 为老节点，n2 为新节点
   function patch(n1, n2, container, parentComponent, anchor) {
     const { type, shapeFlag } = n2
     // Fragment -> 只渲染 children

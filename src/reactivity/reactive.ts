@@ -47,5 +47,6 @@ function createActiveObject(target: any, baseHandlers) {
     console.warn(`target ${target} must be an object`)
     return target
   }
+  // FIXME 有个 bug：如果已经是响应式对象，可以直接 return 出去，避免嵌套
   return new Proxy(target, baseHandlers)
 }
